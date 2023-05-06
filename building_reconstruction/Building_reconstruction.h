@@ -20,8 +20,6 @@ using namespace pcl::io;
 
 class Building_reconstruction {
     public:
-        using PointT = PointXYZ;
-        using CloudT = PointCloud<PointT>;
         void setInputFile(std::string file_name) {
             input_file = file_name;
         }
@@ -502,8 +500,6 @@ class Building_reconstruction {
                 }
             }
         }
-
-
 
 };
 
