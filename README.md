@@ -1,5 +1,7 @@
 # UrbanReconstruction
 
+<img src="img/poisson_compare.png" alt="Сравнение мешей">
+
 ## Class Surface_reconstruction 
 
 ### Public Functions:
