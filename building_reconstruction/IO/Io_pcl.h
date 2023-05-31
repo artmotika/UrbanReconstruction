@@ -159,6 +159,57 @@ class Io_pcl {
             print_value ("%d", cloud.width * cloud.height);
             print_info (" points]\n");
         }
+
+        void saveCloudPCD (std::string const& filename, PointCloud<PointXYZ> const& cloud)
+        {
+            TicToc tt;
+            tt.tic ();
+
+            print_highlight ("Saving ");
+            print_value ("%s ", filename.c_str ());
+
+            savePCDFile (filename, cloud);
+
+            print_info ("[done, ");
+            print_value ("%g", tt.toc ());
+            print_info (" ms : ");
+            print_value ("%d", cloud.width * cloud.height);
+            print_info (" points]\n");
+        }
+
+        void saveCloudPCD (std::string const& filename, PointCloud<PointNormal> const& cloud)
+        {
+            TicToc tt;
+            tt.tic ();
+
+            print_highlight ("Saving ");
+            print_value ("%s ", filename.c_str ());
+
+            savePCDFile (filename, cloud);
+
+            print_info ("[done, ");
+            print_value ("%g", tt.toc ());
+            print_info (" ms : ");
+            print_value ("%d", cloud.width * cloud.height);
+            print_info (" points]\n");
+        }
+
+        void saveCloudPCD (std::string const& filename, PCLPointCloud2 const& cloud)
+        {
+            TicToc tt;
+            tt.tic ();
+
+            print_highlight ("Saving ");
+            print_value ("%s ", filename.c_str ());
+
+            savePCDFile (filename, cloud);
+
+            print_info ("[done, ");
+            print_value ("%g", tt.toc ());
+            print_info (" ms : ");
+            print_value ("%d", cloud.width * cloud.height);
+            print_info (" points]\n");
+        }
 };
 
 

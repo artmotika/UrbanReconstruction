@@ -8,12 +8,22 @@ using namespace pcl;
 
 class Geometry_pcl {
     public:
-        double euclidean_dist_between_two_points(pcl::PointXYZ a, pcl::PointXYZ b)
+        bool point_in_radius(PointXYZ p, PointXYZ center, double radius)
+        {
+            return pow(p.x - center.x, 2) + pow(p.y - center.y, 2) + pow(p.z - center.z, 2) < pow(radius, 2);
+        }
+
+        bool point_in_radius(PointNormal p, PointXYZ center, double radius)
+        {
+            return pow(p.x - center.x, 2) + pow(p.y - center.y, 2) + pow(p.z - center.z, 2) < pow(radius, 2);
+        }
+
+        double euclidean_dist_between_two_points(PointXYZ a, PointXYZ b)
         {
             return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2) + pow(b.z - a.z, 2));
         }
 
-        double max_euclidean_dist_side_in_polygon(std::vector<pcl::PointXYZ> ps)
+        double max_euclidean_dist_side_in_polygon(std::vector<PointXYZ> ps)
         {
             if (ps.size() < 3) return 0.0;
             pcl::PointXYZ p1 = ps[0];
@@ -25,7 +35,7 @@ class Geometry_pcl {
             return max_dist;
         }
 
-        double triangle_area_geron(pcl::PointXYZ p1, pcl::PointXYZ p2, pcl::PointXYZ p3)
+        double triangle_area_geron(PointXYZ p1, PointXYZ p2, PointXYZ p3)
         {
             double a = euclidean_dist_between_two_points(p1, p2);
             double b = euclidean_dist_between_two_points(p2, p3);
@@ -34,7 +44,7 @@ class Geometry_pcl {
             return sqrt(p*(p - a)*(p - b)*(p - c));
         }
 
-        double min_euclidean_dist_between_point_and_polygon_points(pcl::PointXYZ p, std::vector<pcl::PointXYZ> ps)
+        double min_euclidean_dist_between_point_and_polygon_points(PointXYZ p, std::vector<PointXYZ> ps)
         {
             pcl::PointXYZ start_p = *ps.begin();
             double min_dist = euclidean_dist_between_two_points(p, start_p);

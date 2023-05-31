@@ -75,14 +75,14 @@ if(NOT TARGET CGAL::SCIP_support)
 endif()
 
 #create_single_source_cgal_program("polyfit_example_without_input_planes.cpp")
-create_single_source_cgal_program("surface_reconstruction.cpp")
-create_single_source_cgal_program("building_reconstruction.cpp")
+create_single_source_cgal_program("surface_reconstruction_example.cpp")
+create_single_source_cgal_program("building_reconstruction_example.cpp")
 #create_single_source_cgal_program("polyfit_example_with_region_growing.cpp")
 
 foreach(
   target
-        building_reconstruction
-        surface_reconstruction
+        building_reconstruction_example
+        surface_reconstruction_example
         ) # polyfit_example_with_region_growing polyfit_example_without_input_planes
   target_link_libraries(${target} PUBLIC CGAL::Eigen3_support ${PCL_LIBRARIES}) #${OpenCV_LIBS}
   if(TARGET CGAL::SCIP_support)

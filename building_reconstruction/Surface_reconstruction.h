@@ -128,27 +128,28 @@ class Surface_reconstruction {
             t.start();
             Point_set points_start;
             Point_vector points;
-            IO.readFileToPointSet(input_file, &points_start);
-            bool not_sample = true;
-            bool not_normals = true;
-            switch(simplification_average_spacing) {
-                case 0:
-                    break;
-                default:
-                    not_sample = false;
-                    simplifyMesh(&points_start);
-                    break;
+            if (simplification_average_spacing > 0 && estimate_normals_neighbors > 0) {
+                IO.readFileToPointSet(input_file, &points_start);
+                switch(simplification_average_spacing) {
+                    case 0:
+                        break;
+                    default:
+                        simplifyMesh(&points_start);
+                        break;
+                }
+                switch(estimate_normals_neighbors) {
+                    case 0:
+                        break;
+                    default:
+                        estimateNormals(&points_start);
+                        break;
+                }
+                IO.saveFileFromPointSet(output_file, points_start);
+                IO.readFileToPointVector(output_file, &points);
+            } else {
+                IO.readFileToPointVector(input_file, &points);
             }
-            switch(estimate_normals_neighbors) {
-                case 0:
-                    break;
-                default:
-                    not_normals = false;
-                    estimateNormals(&points_start);
-                    break;
-            }
-            IO.saveFileFromPointSet(output_file, points_start);
-            IO.readFileToPointVector(output_file, &points);
+
             Surface_mesh surface_mesh;
             switch(shape_detection_type) {
                 case 0:
