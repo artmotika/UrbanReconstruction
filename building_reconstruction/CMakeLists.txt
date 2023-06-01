@@ -36,7 +36,6 @@ if(NOT Boost_FOUND)
 endif()
 
 # PCL
-
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
@@ -74,16 +73,48 @@ if(NOT TARGET CGAL::SCIP_support)
   endif()
 endif()
 
+
+add_library(iocgal IO/Io_cgal.cpp)
+target_include_directories(iocgal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/IO)
+add_library(iopcl IO/Io_pcl.cpp)
+target_include_directories(iopcl PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/IO)
+add_library(geometry Geometry/Geometry_pcl.cpp)
+target_include_directories(iopcl PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/IO)
+add_library(surface_reconstruction surface_reconstruction.cpp)
+target_include_directories(surface_reconstruction PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(building_reconstruction building_reconstruction.cpp)
+target_include_directories(building_reconstruction PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 #create_single_source_cgal_program("polyfit_example_without_input_planes.cpp")
 create_single_source_cgal_program("surface_reconstruction_example.cpp")
 create_single_source_cgal_program("building_reconstruction_example.cpp")
 #create_single_source_cgal_program("polyfit_example_with_region_growing.cpp")
 
 foreach(
+        target
+        iocgal
+        iopcl
+        geometry
+        surface_reconstruction
+        building_reconstruction
+) # polyfit_example_with_region_growing polyfit_example_without_input_planes
+  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support ${PCL_LIBRARIES}) #${OpenCV_LIBS}
+  if(TARGET CGAL::SCIP_support)
+    target_link_libraries(${target} PUBLIC CGAL::SCIP_support)
+  else()
+    target_link_libraries(${target} PUBLIC CGAL::GLPK_support)
+  endif()
+endforeach()
+
+foreach(
   target
         building_reconstruction_example
         surface_reconstruction_example
         ) # polyfit_example_with_region_growing polyfit_example_without_input_planes
+  target_link_libraries(${target} PUBLIC iocgal)
+  target_link_libraries(${target} PUBLIC iopcl)
+  target_link_libraries(${target} PUBLIC geometry)
+  target_link_libraries(${target} PUBLIC surface_reconstruction)
+  target_link_libraries(${target} PUBLIC building_reconstruction)
   target_link_libraries(${target} PUBLIC CGAL::Eigen3_support ${PCL_LIBRARIES}) #${OpenCV_LIBS}
   if(TARGET CGAL::SCIP_support)
     target_link_libraries(${target} PUBLIC CGAL::SCIP_support)
