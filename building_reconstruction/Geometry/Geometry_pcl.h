@@ -7,8 +7,7 @@
 
 using namespace pcl;
 
-class Geometry_pcl {
-    public:
+namespace Geometry_pcl {
         bool point_in_radius(PointXYZ p, PointXYZ center, double radius);
 
         bool point_in_radius(PointNormal p, PointXYZ center, double radius);
@@ -21,7 +20,7 @@ class Geometry_pcl {
 
         double min_euclidean_dist_between_point_and_polygon_points(PointXYZ p, std::vector<PointXYZ> ps);
 
-};
+}
 
 
 #endif //URBANRECONSTRUCTION_GEOMETRY_PCL_H

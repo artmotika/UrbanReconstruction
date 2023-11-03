@@ -5,7 +5,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h> // since Cgal 5.6 changed
 #include <CGAL/Polygonal_surface_reconstruction.h>
 #include <CGAL/remove_outliers.h>
 #include <CGAL/grid_simplify_point_set.h>

@@ -7,8 +7,7 @@ using FT = Kernel::FT;
 int main()
 {
     Surface_reconstruction surface_reconstruction;
-    surface_reconstruction.setInputFile("../data/Construction_home_rg.ply"); // Construction_around_sample3_start.ply
-    surface_reconstruction.setOutputFile("../data/region_growing_sample.ply");
+    surface_reconstruction.setInputFile("../data/Construction_home_sample_normals.ply");
 //    Этот компонент обнаружения формы основан на алгоритме роста региона, применяемом к набору указанных пользователем элементов.
 //            Фигуры определяются растущими областями из семян, где каждая область создается следующим образом:
 //
@@ -31,7 +30,5 @@ int main()
     surface_reconstruction.setMaxAcceptedAngle(FT(25));
     surface_reconstruction.setMinRegionSize(30); // 40
     Surface_mesh surface_mesh = surface_reconstruction.reconstruct();
-    Io_cgal IO;
-    IO.saveFileFromPointVector("../data/region_growing_sample.ply", surface_mesh);
     return 0;
 }

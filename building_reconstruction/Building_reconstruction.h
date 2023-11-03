@@ -2,11 +2,6 @@
 #define URBANRECONSTRUCTION_BUILDING_RECONSTRUCTION_H
 
 #include <pcl/PCLPointCloud2.h>
-#include <pcl/surface/poisson.h>
-#include <pcl/surface/gp3.h>
-#include <pcl/surface/concave_hull.h>
-#include <pcl/surface/convex_hull.h>
-#include <pcl/filters/crop_hull.h>
 
 #include <iostream>
 #include <fstream>
@@ -20,6 +15,7 @@
 
 #include "IO/Io_pcl.h"
 #include "Geometry/Geometry_pcl.h"
+#include "Algo_reconstruction.h"
 
 using namespace pcl;
 using namespace pcl::io;
@@ -92,23 +88,7 @@ class Building_reconstruction {
         bool convex_concave_hull = true;
         double filter_radius = 0.5;
 
-        void compute_poisson (const PCLPointCloud2::ConstPtr &input, PolygonMesh &output,
-                              int depth, int solver_divide, int iso_divide, float point_weight);
-
-        void compute_poisson(PointCloud<PointNormal>::Ptr &input, PolygonMesh &output,
-                             int depth, int solver_divide, int iso_divide, float point_weight);
-
-        void compute_hull (const PCLPointCloud2::ConstPtr &cloud_in,
-                           bool convex_concave_hull,
-                           float alpha,
-                           PolygonMesh &mesh_out);
-
-        void compute_hull (const PointCloud<PointXYZ>::ConstPtr &cloud_in,
-                           bool convex_concave_hull,
-                           float alpha,
-                           PolygonMesh &mesh_out);
-
-        void upsample_by_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh);
+        void upsample_by_mesh (PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh);
 };
 
 

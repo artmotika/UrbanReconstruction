@@ -1,64 +1,11 @@
 #include "Building_reconstruction.h"
+#include "Algo_reconstruction.h"
 
 using namespace pcl;
-
-void compute_poisson (const PCLPointCloud2::ConstPtr &input, PolygonMesh &output,
-                      int depth, int solver_divide, int iso_divide, float point_weight)
-{
-    PointCloud<PointNormal>::Ptr xyz_cloud (new PointCloud<PointNormal> ());
-    fromPCLPointCloud2 (*input, *xyz_cloud);
-
-    print_info ("Using parameters: depth %d, solverDivide %d, isoDivide %d\n", depth, solver_divide, iso_divide);
-
-    Poisson<PointNormal> poisson;
-    poisson.setDepth (depth);
-    poisson.setSolverDivide (solver_divide);
-    poisson.setIsoDivide (iso_divide);
-    poisson.setPointWeight (point_weight);
-    poisson.setInputCloud (xyz_cloud);
-
-    TicToc tt;
-    tt.tic ();
-    print_highlight ("Computing ...");
-    poisson.reconstruct (output);
-
-    print_info ("[Done, "); print_value ("%g", tt.toc ()); print_info (" ms]\n");
-}
-
-void compute_greedy_triangulation (const PCLPointCloud2::ConstPtr &input, PolygonMesh &output,
-                                   double mu, double radius)
-{
-    TicToc tt;
-    tt.tic ();
-
-    print_highlight (stderr, "Computing ");
-
-    PointCloud<PointNormal>::Ptr xyz_cloud (new PointCloud<PointNormal> ());
-    fromPCLPointCloud2 (*input, *xyz_cloud);
-
-    PointCloud<PointNormal>::Ptr cloud (new PointCloud<PointNormal> ());
-    for (std::size_t i = 0; i < xyz_cloud->size (); ++i)
-        if (std::isfinite ((*xyz_cloud)[i].x))
-            cloud->push_back ((*xyz_cloud)[i]);
-
-    cloud->width = cloud->size ();
-    cloud->height = 1;
-    cloud->is_dense = true;
-
-    GreedyProjectionTriangulation<PointNormal> gpt;
-    gpt.setSearchMethod (pcl::search::KdTree<PointNormal>::Ptr (new pcl::search::KdTree<PointNormal>));
-    gpt.setInputCloud (cloud);
-    gpt.setSearchRadius (radius);
-    gpt.setMu (mu);
-
-    gpt.reconstruct (output);
-
-    print_info ("[done, "); print_value ("%g", tt.toc ()); print_info (" ms : "); print_value ("%lu", output.polygons.size ()); print_info (" polygons]\n");
-}
+using namespace algo_rec;
 
 int main()
 {
-    Io_pcl IO;
     Building_reconstruction building_reconstruction;
     building_reconstruction.setPoissonDepth(10);
     building_reconstruction.setFilterRadius(0.4);
@@ -67,7 +14,7 @@ int main()
     building_reconstruction.setOutputFile("../data/building_reconstruction2.ply");
 
     PolygonMesh surfaces_mesh;
-    IO.loadCloud("../data/Construction_home_sample_normals_plane.ply", surfaces_mesh);
+    Io_pcl::loadCloud("../data/Construction_home_sample_normals_plane.ply", surfaces_mesh);
 
     PCLPointCloud2::Ptr ideal_cloud (new PCLPointCloud2);
     PCLPointCloud2::Ptr poisson_cloud (new PCLPointCloud2);
@@ -93,29 +40,30 @@ int main()
     double greedy_mu = 3.0; //
 
     // ideal
-    IO.loadCloud("../data/Construction_home_sample_normals_ideal_point_cloud.pcd", *ideal_cloud);
+    Io_pcl::loadCloud("../data/Construction_home_sample_normals_ideal_point_cloud.pcd", *ideal_cloud);
     compute_poisson(ideal_cloud, ideal_mesh, poisson_depth, solver_divide, iso_divide, poisson_point_weight);
     ideal_mesh = building_reconstruction.filter_mesh_poisson_by_points(
             ideal_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 2.4);
     PointCloud<PointXYZ>::Ptr ideal_points = building_reconstruction.filter_points_by_mesh(
             ideal_mesh);
-    IO.saveCloud("../data/ideal.ply", ideal_mesh);
-    IO.saveCloud("../data/ideal_points.ply", *ideal_points);
+    Io_pcl::saveCloud("../data/ideal.ply", ideal_mesh);
+    Io_pcl::saveCloud("../data/ideal_points.ply", *ideal_points);
     building_reconstruction.upsample_mesh(ideal_points, ideal_mesh, 0.004, 0.1);
-    IO.saveCloud("../data/ideal_points_upsample.ply", *ideal_points);
+    Io_pcl::saveCloud("../data/ideal_points_upsample.ply", *ideal_points);
 
     // poisson_repeatable
-    poisson_plane_mesh = building_reconstruction.reconstruct2();
+    poisson_plane_mesh = building_reconstruction.reconstruct();
     poisson_plane_mesh = building_reconstruction.filter_mesh_poisson_by_points(
             poisson_plane_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 2.4);
     PointCloud<PointXYZ>::Ptr poisson_plane_points = building_reconstruction.filter_points_by_mesh(
             poisson_plane_mesh);
-    IO.saveCloud("../data/poisson_plane.ply", poisson_plane_mesh);
-    IO.saveCloud("../data/poisson_plane_points.ply", *poisson_plane_points); //*poisson_plane_points
-    building_reconstruction.upsample_mesh(poisson_plane_points, poisson_plane_mesh, 0.04, 0.2);
-    IO.saveCloud("../data/poisson_plane_points_upsample.ply", *poisson_plane_points);
+    Io_pcl::saveCloud("../data/poisson_plane.ply", poisson_plane_mesh);
+    Io_pcl::saveCloud("../data/poisson_plane_points.ply", *poisson_plane_points); //*poisson_plane_points
+    building_reconstruction.upsample_mesh(poisson_plane_points, poisson_plane_mesh, 0.004, 0.1);
+    Io_pcl::saveCloud("../data/poisson_plane_points_upsample.ply", *poisson_plane_points);
+
 
     // poisson_repeatable_not_plane
     IO.loadCloud("../data/Construction_home_sample_normals.pcd", *poisson_cloud);

@@ -12,8 +12,8 @@ using namespace pcl;
 using namespace pcl::io;
 using namespace pcl::console;
 
-class Io_pcl {
-    public:
+namespace Io_pcl {
+
         bool loadCloudPLY (const std::string &filename, PCLPointCloud2 &cloud);
 
         bool loadCloud (const std::string &filename, PCLPointCloud2 &cloud);
@@ -35,7 +35,6 @@ class Io_pcl {
         void saveCloudPCD (std::string const& filename, PointCloud<PointNormal> const& cloud);
 
         void saveCloudPCD (std::string const& filename, PCLPointCloud2 const& cloud);
-};
-
+}
 
 #endif //URBANRECONSTRUCTION_IO_PCL_H

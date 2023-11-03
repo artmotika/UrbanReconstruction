@@ -132,7 +132,6 @@ std::size_t Surface_reconstruction::getMinRegionSize() {
 }
 
 Surface_reconstruction::Surface_mesh Surface_reconstruction::reconstruct() {
-    Io_cgal IO;
     CGAL::Timer t;
     t.start();
     Point_set points_start;
@@ -153,10 +152,10 @@ Surface_reconstruction::Surface_mesh Surface_reconstruction::reconstruct() {
                 estimateNormals(&points_start);
                 break;
         }
-        IO.saveFileFromPointSet(output_file, points_start);
-        IO.readFileToPointVector(output_file, &points);
+        Io_cgal::saveFileFromPointSet(output_file, points_start);
+        Io_cgal::readFileToPointVector(output_file, &points);
     } else {
-        IO.readFileToPointVector(input_file, &points);
+        Io_cgal::readFileToPointVector(input_file, &points);
     }
 
     Surface_mesh surface_mesh;
