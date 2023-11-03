@@ -4,25 +4,26 @@ namespace Io_cgal {
     void readFileToPointSet(std::string filename, Point_set *points_start) {
         CGAL::Timer t;
         t.start();
-        std::ifstream stream (filename, std::ios_base::binary);
-        if (!stream)
-        {
+        std::ifstream stream(filename, std::ios_base::binary);
+        if (!stream) {
             std::cerr << "Error: cannot read file " << filename << std::endl;
             throw "error to read in readFileToPointSet(filename)";
         }
         stream >> *points_start;
-        std::cout << "Read " << points_start->size () << " point(s)" << ". Time: " << t.time() << " sec." << std::endl;
+        std::cout << "Read " << points_start->size() << " point(s)" << ". Time: " << t.time() << " sec." << std::endl;
         if (points_start->empty())
             throw "error to read in readFileToPointSet(filename), file is empty";
     }
+
     void saveFileFromPointSet(std::string filename, Point_set points_start) {
         CGAL::Timer t;
         t.start();
-        std::ofstream f (filename);
+        std::ofstream f(filename);
         f << points_start;
-        f.close ();
-        std::cout << "Write " << points_start.size () << " point(s)" << ". Time: " << t.time() << " sec." << std::endl;
+        f.close();
+        std::cout << "Write " << points_start.size() << " point(s)" << ". Time: " << t.time() << " sec." << std::endl;
     }
+
     void readFileToPointVector(std::string filename, Point_vector *points) {
         CGAL::Timer t;
         t.start();
@@ -40,16 +41,16 @@ namespace Io_cgal {
                                    CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
             std::cerr << "Error: cannot read file " << input_file << std::endl;
             throw "error to read in readFileToPointVector(filename)";
-        }
-        else
+        } else
             std::cout << " Done. " << points->size() << " points. Time: "
                       << t.time() << " sec." << std::endl;
     }
+
     void saveFileFromPointVector(std::string filename, Surface_mesh model) {
         CGAL::Timer t;
         t.start();
         std::cout << "Saving...";
-        const std::string& output_file(filename);
+        const std::string &output_file(filename);
         if (CGAL::IO::write_PLY(output_file, model, CGAL::parameters::use_binary_mode(false)))
             std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
         else {

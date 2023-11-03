@@ -23,10 +23,13 @@ using Normal_map = CGAL::Nth_of_tuple_property_map<1, PNI>;
 using Plane_index_map = CGAL::Nth_of_tuple_property_map<2, PNI>;
 
 namespace Io_cgal {
-        void readFileToPointSet(std::string filename, Point_set *points_start);
-        void saveFileFromPointSet(std::string filename, Point_set points_start);
-        void readFileToPointVector(std::string filename, Point_vector *points);
-        void saveFileFromPointVector(std::string filename, Surface_mesh model);
+    void readFileToPointSet(std::string filename, Point_set *points_start);
+
+    void saveFileFromPointSet(std::string filename, Point_set points_start);
+
+    void readFileToPointVector(std::string filename, Point_vector *points);
+
+    void saveFileFromPointVector(std::string filename, Surface_mesh model);
 }
 
 #endif //URBANRECONSTRUCTION_IO_CGAL_H

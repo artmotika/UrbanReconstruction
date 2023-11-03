@@ -15,11 +15,12 @@ float Panorama2cubemap::getTheta(float x, float y) {
 
 int Panorama2cubemap::getIndexBeforeChar(std::string path, char sign) {
     unsigned int path_len = path.size();
-    for (int i = path_len-1; i >= 0; i--) {
+    for (int i = path_len - 1; i >= 0; i--) {
         if (path[i] == sign) return i;
     }
     std::ostringstream oss;
-    oss << "path argument in Panorama2cubemap::getIndexBeforeChar(std::string path, char sign) doesn't have a " << sign << " :  " << path << "!\n";
+    oss << "path argument in Panorama2cubemap::getIndexBeforeChar(std::string path, char sign) doesn't have a " << sign
+        << " :  " << path << "!\n";
     throw invalid_argument(oss.str());
 }
 
@@ -44,7 +45,7 @@ void Panorama2cubemap::setInputImagePath(std::string image_path) {
     input_image_path = image_path;
 }
 
-std::string Panorama2cubemap::getInputImagePath(){
+std::string Panorama2cubemap::getInputImagePath() {
     return input_image_path;
 }
 
@@ -67,6 +68,7 @@ std::string Panorama2cubemap::getReferencePath() {
 void Panorama2cubemap::setDescriptionFileOption(bool description_file) {
     description_file_option = description_file;
 }
+
 bool Panorama2cubemap::getDescriptionFileOption() {
     return description_file_option;
 }
@@ -111,22 +113,22 @@ shift_coord Panorama2cubemap::getShift() {
 void Panorama2cubemap::createDescriptionFiles(std::string output_image_subpath1) {
     std::ostringstream oss;
     oss << output_image_subpath1 << "Yplus" << ".txt";
-    createDescriptionFile(DestinationType::Yplus , oss.str());
+    createDescriptionFile(DestinationType::Yplus, oss.str());
     oss.str("");
     oss << output_image_subpath1 << "Xplus" << ".txt";
-    createDescriptionFile(DestinationType::Xplus , oss.str());
+    createDescriptionFile(DestinationType::Xplus, oss.str());
     oss.str("");
     oss << output_image_subpath1 << "Yminus" << ".txt";
-    createDescriptionFile(DestinationType::Yminus , oss.str());
+    createDescriptionFile(DestinationType::Yminus, oss.str());
     oss.str("");
     oss << output_image_subpath1 << "Xminus" << ".txt";
-    createDescriptionFile(DestinationType::Xminus , oss.str());
+    createDescriptionFile(DestinationType::Xminus, oss.str());
     oss.str("");
     oss << output_image_subpath1 << "Zminus" << ".txt";
-    createDescriptionFile(DestinationType::Zminus , oss.str());
+    createDescriptionFile(DestinationType::Zminus, oss.str());
     oss.str("");
     oss << output_image_subpath1 << "Zplus" << ".txt";
-    createDescriptionFile(DestinationType::Zplus , oss.str());
+    createDescriptionFile(DestinationType::Zplus, oss.str());
 }
 
 std::string Panorama2cubemap::getFileName(std::string file_path) {
@@ -141,7 +143,7 @@ void Panorama2cubemap::createDescriptionFile(DestinationType type, std::string o
     double image_height = input_width / 4;
     double param;
     double radian;
-    std::ofstream output_file (output_path);
+    std::ofstream output_file(output_path);
     rapidcsv::Document doc(reference_path, rapidcsv::LabelParams(0, 0),
                            rapidcsv::SeparatorParams('\t'));
     std::string image_name = getFileName(input_image_path);
@@ -227,7 +229,7 @@ void Panorama2cubemap::transform() {
     const int output_height = sqr * 2;
 
     // Placeholder image for the result
-    vector<cv::Mat> destinations;
+    vector <cv::Mat> destinations;
     for (int i = 0; i < 6; i++) {
         cv::Mat destination(sqr, sqr, CV_8UC3, cv::Scalar(255, 255, 255));
         destinations.push_back(destination);
@@ -235,7 +237,7 @@ void Panorama2cubemap::transform() {
 
     auto begin = chrono::high_resolution_clock::now();
 
-    #pragma omp parallel for
+#pragma omp parallel for
     for (int j = 0; j < output_width; j++) {
         // #pragma omp parallel for
         for (int i = 0; i < output_height; i++) {
@@ -261,8 +263,7 @@ void Panorama2cubemap::transform() {
                     x = 0.5 * sqr;
                     y = (tx - 0.5 * sqr) * -1;
                     z = ty - 0.5 * sqr;
-                }
-                else { // top right [Y-]
+                } else { // top right [Y-]
                     destImageType = DestinationType::Yminus;
                     tx = j - sqr * 2;
                     ty = i;
@@ -278,16 +279,14 @@ void Panorama2cubemap::transform() {
                     x = int(-0.5 * sqr);
                     y = int(tx - 0.5 * sqr);
                     z = int(ty - 0.5 * sqr);
-                }
-                else if (j < 2 * sqr + 1) { // bottom middle [Z-]
+                } else if (j < 2 * sqr + 1) { // bottom middle [Z-]
                     destImageType = DestinationType::Zminus;
                     tx = j - sqr;
                     ty = i - sqr;
                     x = (ty - 0.5 * sqr) * -1;
                     y = (tx - 0.5 * sqr) * -1;
                     z = 0.5 * sqr; // was -0.5 might be due to phi being reversed
-                }
-                else { // bottom right [Z+]
+                } else { // bottom right [Z+]
                     destImageType = DestinationType::Zplus;
                     tx = j - sqr * 2;
                     ty = i - sqr;

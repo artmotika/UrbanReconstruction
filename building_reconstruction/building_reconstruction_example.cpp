@@ -4,25 +4,26 @@
 using namespace pcl;
 using namespace algo_rec;
 
-int main()
-{
+int main() {
     Building_reconstruction building_reconstruction;
     building_reconstruction.setPoissonDepth(10);
     building_reconstruction.setFilterRadius(0.4);
-    building_reconstruction.setInputFile("../data/Construction_home_sample_normals.pcd"); //Construction_corner_oriented_normals_not_sample.pcd//Construction_corner_sample_oriented_normals.pcd
-    building_reconstruction.setInputFileSurfaces("../data/Construction_home_sample_normals_plane.ply"); //region_growing_sample.ply
+    building_reconstruction.setInputFile(
+            "../data/Construction_home_sample_normals.pcd"); //Construction_corner_oriented_normals_not_sample.pcd//Construction_corner_sample_oriented_normals.pcd
+    building_reconstruction.setInputFileSurfaces(
+            "../data/Construction_home_sample_normals_plane.ply"); //region_growing_sample.ply
     building_reconstruction.setOutputFile("../data/building_reconstruction2.ply");
 
     PolygonMesh surfaces_mesh;
     Io_pcl::loadCloud("../data/Construction_home_sample_normals_plane.ply", surfaces_mesh);
 
-    PCLPointCloud2::Ptr ideal_cloud (new PCLPointCloud2);
-    PCLPointCloud2::Ptr poisson_cloud (new PCLPointCloud2);
-    PCLPointCloud2::Ptr pivot_cloud (new PCLPointCloud2);
-    PCLPointCloud2::Ptr alpha_shape_cloud (new PCLPointCloud2);
-    PCLPointCloud2::Ptr scale_space_cloud (new PCLPointCloud2);
-    PCLPointCloud2::Ptr delaunay_cloud (new PCLPointCloud2);
-    PCLPointCloud2::Ptr greedy_cloud (new PCLPointCloud2);
+    PCLPointCloud2::Ptr ideal_cloud(new PCLPointCloud2);
+    PCLPointCloud2::Ptr poisson_cloud(new PCLPointCloud2);
+    PCLPointCloud2::Ptr pivot_cloud(new PCLPointCloud2);
+    PCLPointCloud2::Ptr alpha_shape_cloud(new PCLPointCloud2);
+    PCLPointCloud2::Ptr scale_space_cloud(new PCLPointCloud2);
+    PCLPointCloud2::Ptr delaunay_cloud(new PCLPointCloud2);
+    PCLPointCloud2::Ptr greedy_cloud(new PCLPointCloud2);
 
     PolygonMesh greedy_mesh;
     PolygonMesh delaunay_mesh;
@@ -152,57 +153,59 @@ int main()
     double repeat_mistake = 0.3; //0.2
     double hole_mistake = 0.15; //0.15
     IO.loadCloudPLY("../data/ideal_points_partnew.ply", *ideal_cloud);
-    PCLPointCloud2::Ptr ideal_cloud_upsample (new PCLPointCloud2);
+    PCLPointCloud2::Ptr ideal_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/ideal_points_upsample_partnew.ply", *ideal_cloud_upsample);
 
     std::pair<unsigned long, double> metric_pair;
 
     // poisson_plane
-    PCLPointCloud2::Ptr poisson_plane_cloud (new PCLPointCloud2);
+    PCLPointCloud2::Ptr poisson_plane_cloud(new PCLPointCloud2);
     IO.loadCloudPLY("../data/poisson_plane_points_part.ply", *poisson_plane_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
-                                                                               poisson_plane_cloud,
-                                                                               repeat_mistake,
-                                                                               "../data/poisson_plane_not_repeat_part.ply");
+                                                                         poisson_plane_cloud,
+                                                                         repeat_mistake,
+                                                                         "../data/poisson_plane_not_repeat_part.ply");
     std::cout << std::endl
-                << "ideal_points_upsample and poisson_plane_points repeatability_metric with max_mistake = " << repeat_mistake << ": "
-                << "count: " << metric_pair.first
-                << " value: " << metric_pair.second
-                << std::endl;
-    PCLPointCloud2::Ptr poisson_plane_cloud_upsample (new PCLPointCloud2);
+              << "ideal_points_upsample and poisson_plane_points repeatability_metric with max_mistake = "
+              << repeat_mistake << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
+              << std::endl;
+    PCLPointCloud2::Ptr poisson_plane_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/poisson_plane_points_upsample_part.ply", *poisson_plane_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
-                                                  poisson_plane_cloud_upsample,
-                                                  hole_mistake,
-                                                  "../data/poisson_plane_hole_part.ply");
+                                                                poisson_plane_cloud_upsample,
+                                                                hole_mistake,
+                                                                "../data/poisson_plane_hole_part.ply");
     std::cout << std::endl
-                << "ideal_points_upsample and poisson_plane hole_metric with max_mistake = " << hole_mistake << ": "
-                << "count: " << metric_pair.first
-                << " value: " << metric_pair.second
-                << std::endl;
+              << "ideal_points_upsample and poisson_plane hole_metric with max_mistake = " << hole_mistake << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
+              << std::endl;
 
 
     // poisson
     IO.loadCloudPLY("../data/poisson_points_part.ply", *poisson_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
-                                                           poisson_cloud,
-                                                           repeat_mistake,
-                                                           "../data/poisson_not_repeat_part.ply");
+                                                                         poisson_cloud,
+                                                                         repeat_mistake,
+                                                                         "../data/poisson_not_repeat_part.ply");
     std::cout << std::endl
-                << "ideal_points_upsample and poisson_points repeatability_metric with max_mistake = " << repeat_mistake << ": "
-                << "count: " << metric_pair.first
-                << " value: " << metric_pair.second
+              << "ideal_points_upsample and poisson_points repeatability_metric with max_mistake = " << repeat_mistake
+              << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
-    PCLPointCloud2::Ptr poisson_cloud_upsample (new PCLPointCloud2);
+    PCLPointCloud2::Ptr poisson_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/poisson_points_upsample_part.ply", *poisson_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 poisson_cloud_upsample,
                                                                 hole_mistake,
                                                                 "../data/poisson_hole_part.ply");
     std::cout << std::endl
-            << "ideal_points_upsample and poisson hole_metric with max_mistake = " << hole_mistake << ": "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << "ideal_points_upsample and poisson hole_metric with max_mistake = " << hole_mistake << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
 
 
@@ -213,21 +216,22 @@ int main()
                                                                          repeat_mistake,
                                                                          "../data/pivot_not_repeat_part.ply");
     std::cout << std::endl
-            << "ideal_points_upsample and pivot_points repeatability_metric with max_mistake = " << repeat_mistake << ": "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << "ideal_points_upsample and pivot_points repeatability_metric with max_mistake = " << repeat_mistake
+              << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
 
               << std::endl;
-    PCLPointCloud2::Ptr pivot_cloud_upsample (new PCLPointCloud2);
+    PCLPointCloud2::Ptr pivot_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/pivot_points_upsample_part.ply", *pivot_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 pivot_cloud_upsample,
                                                                 hole_mistake,
                                                                 "../data/pivot_hole_part.ply");
     std::cout << std::endl
-            << "ideal_points_upsample and pivot hole_metric with max_mistake = " << hole_mistake << ": "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << "ideal_points_upsample and pivot hole_metric with max_mistake = " << hole_mistake << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
 
 
@@ -238,20 +242,21 @@ int main()
                                                                          repeat_mistake,
                                                                          "../data/alpha_shape_not_repeat_part.ply");
     std::cout << std::endl
-            << "ideal_points_upsample and alpha_shape_points repeatability_metric with max_mistake = " << repeat_mistake << ": "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << "ideal_points_upsample and alpha_shape_points repeatability_metric with max_mistake = "
+              << repeat_mistake << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
-    PCLPointCloud2::Ptr alpha_shape_cloud_upsample (new PCLPointCloud2);
+    PCLPointCloud2::Ptr alpha_shape_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/alpha_shape_points_upsample_part.ply", *alpha_shape_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 alpha_shape_cloud_upsample,
                                                                 hole_mistake,
                                                                 "../data/alpha_shape_hole_part.ply");
     std::cout << std::endl
-            << "ideal_points_upsample and alpha_shape hole_metric with max_mistake = " << hole_mistake << ": "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << "ideal_points_upsample and alpha_shape hole_metric with max_mistake = " << hole_mistake << ": "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
 
 
@@ -262,18 +267,19 @@ int main()
                                                                          repeat_mistake,
                                                                          "../data/delaunay_not_repeat_part.ply");
     std::cout << std::endl
-            << "ideal_points_upsample and delaunay_points repeatability_metric with max_mistake = " << repeat_mistake << ": "
+              << "ideal_points_upsample and delaunay_points repeatability_metric with max_mistake = " << repeat_mistake
+              << ": "
               << "count: " << metric_pair.first
               << " value: " << metric_pair.second
               << std::endl;
-    PCLPointCloud2::Ptr delaunay_cloud_upsample (new PCLPointCloud2);
+    PCLPointCloud2::Ptr delaunay_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/delaunay_points_upsample_part.ply", *delaunay_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 delaunay_cloud_upsample,
                                                                 hole_mistake,
                                                                 "../data/delaunay_hole_part.ply");
     std::cout << std::endl
-            << "ideal_points_upsample and delaunay hole_metric with max_mistake = " << hole_mistake << ": "
+              << "ideal_points_upsample and delaunay hole_metric with max_mistake = " << hole_mistake << ": "
               << "count: " << metric_pair.first
               << " value: " << metric_pair.second
               << std::endl;
@@ -286,20 +292,20 @@ int main()
                                                                          repeat_mistake,
                                                                          "../data/scale_space_not_repeat_partnew.ply");
     std::cout << std::endl << "ideal_points_upsample and scale_space_points repeatability_metric with max_mistake = "
-            << repeat_mistake << " 0.3: "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << repeat_mistake << " 0.3: "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
-    PCLPointCloud2::Ptr scale_space_cloud_upsample (new PCLPointCloud2);
+    PCLPointCloud2::Ptr scale_space_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/scale_space_points_upsample_partnew.ply", *scale_space_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 scale_space_cloud_upsample,
                                                                 hole_mistake,
                                                                 "../data/scale_space_hole_partnew.ply");
     std::cout << std::endl << "ideal_points_upsample and scale_space hole_metric with max_mistake = "
-            << hole_mistake << " 0.25: "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << hole_mistake << " 0.25: "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
 
 
@@ -310,20 +316,20 @@ int main()
                                                                          repeat_mistake,
                                                                          "../data/greedy_not_repeat_partnew.ply");
     std::cout << std::endl << "ideal_points_upsample and greedy_points repeatability_metric with max_mistake = "
-            << repeat_mistake << " 0.3: "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << repeat_mistake << " 0.3: "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
-    PCLPointCloud2::Ptr greedy_cloud_upsample (new PCLPointCloud2);
+    PCLPointCloud2::Ptr greedy_cloud_upsample(new PCLPointCloud2);
     IO.loadCloudPLY("../data/greedy_points_upsample_partnew.ply", *greedy_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
-                                                               greedy_cloud_upsample,
+                                                                greedy_cloud_upsample,
                                                                 hole_mistake, //0.25
-                                                               "../data/greedy_hole_partnew.ply");
+                                                                "../data/greedy_hole_partnew.ply");
     std::cout << std::endl << "ideal_points_upsample and greedy hole_metric with max_mistake = "
-            << hole_mistake << " 0.25: "
-            << "count: " << metric_pair.first
-            << " value: " << metric_pair.second
+              << hole_mistake << " 0.25: "
+              << "count: " << metric_pair.first
+              << " value: " << metric_pair.second
               << std::endl;
     return 0;
 }

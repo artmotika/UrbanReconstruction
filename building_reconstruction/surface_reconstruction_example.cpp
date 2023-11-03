@@ -1,11 +1,11 @@
 #include "Surface_reconstruction.h"
+
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point = Kernel::Point_3;
 using Surface_mesh = CGAL::Surface_mesh<Point>;
 using FT = Kernel::FT;
 
-int main()
-{
+int main() {
     Surface_reconstruction surface_reconstruction;
     surface_reconstruction.setInputFile("../data/Construction_home_sample_normals.ply");
 //    Этот компонент обнаружения формы основан на алгоритме роста региона, применяемом к набору указанных пользователем элементов.
@@ -26,7 +26,8 @@ int main()
     surface_reconstruction.setSimplificationAverageSpacing(0);
     surface_reconstruction.setEstimateNormalsNeighbors(0); //6
     surface_reconstruction.setSearchSphereRadius(FT(2) / FT(13)); // чем больше радиус, тем меньше регионов // 27
-    surface_reconstruction.setMaxDistanceToPlane(FT(2) / FT(130));//1000 640 320 160 // 80 чем больше, тем дольше (меньше плоскостей)
+    surface_reconstruction.setMaxDistanceToPlane(
+            FT(2) / FT(130));//1000 640 320 160 // 80 чем больше, тем дольше (меньше плоскостей)
     surface_reconstruction.setMaxAcceptedAngle(FT(25));
     surface_reconstruction.setMinRegionSize(30); // 40
     Surface_mesh surface_mesh = surface_reconstruction.reconstruct();

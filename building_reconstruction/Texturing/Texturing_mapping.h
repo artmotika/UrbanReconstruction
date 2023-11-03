@@ -19,19 +19,23 @@
 #include <pcl/features/normal_3d.h>
 #include <pcl/features/impl/normal_3d.hpp> // make sure to include the .hpp file
 
-PCL_INSTANTIATE_PRODUCT(NormalEstimation, ((pcl::PointXYZRGBNormal))((pcl::Normal)))
+PCL_INSTANTIATE_PRODUCT(NormalEstimation, ((pcl::PointXYZRGBNormal))((pcl::Normal))
+)
 
 namespace urban_rec {
     class Texturing_mapping {
-        public:
-            void setInputPolygonMesh(pcl::PolygonMesh polygon_mesh);
-            pcl::PolygonMesh getInputPolygonMesh();
-            void texture_mesh(std::vector<std::string> argv);
+    public:
+        void setInputPolygonMesh(pcl::PolygonMesh polygon_mesh);
 
-        private:
-            pcl::PolygonMesh::Ptr input_polygon_mesh {nullptr};
-            bool read_cam_pose_file(std::string filename,
-                                pcl::TextureMapping<pcl::PointXYZ>::Camera& cam);
+        pcl::PolygonMesh getInputPolygonMesh();
+
+        void texture_mesh(std::vector <std::string> argv);
+
+    private:
+        pcl::PolygonMesh::Ptr input_polygon_mesh{nullptr};
+
+        bool read_cam_pose_file(std::string filename,
+                                pcl::TextureMapping<pcl::PointXYZ>::Camera &cam);
     };
 }
 
