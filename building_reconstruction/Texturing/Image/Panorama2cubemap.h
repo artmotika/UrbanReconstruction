@@ -9,6 +9,8 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <boost/filesystem.hpp>
+#include <boost/thread/thread.hpp>
 #include "../../../include/rapidscv/rapidcsv.h"
 #include <Eigen/Dense>
 #include "../../PointClouds/Shift.h"
@@ -21,13 +23,13 @@ namespace urban_rec {
 
     class Panorama2cubemap {
     public:
-        Panorama2cubemap(std::string input_image_path, std::string output_image_path, std::string ref_path,
+        Panorama2cubemap(std::string input_image_path, std::string output_image_path, std::string directory_path,
                          bool description_file = true) {
             setImagePanorama(input_image_path);
             setInputImagePath(input_image_path);
             setOutputImagePath(output_image_path);
+            setDirPath(directory_path);
             setDescriptionFileOption(description_file);
-            setReferencePath(ref_path);
         }
 
         void setImagePanorama(std::string image_path);
@@ -42,9 +44,9 @@ namespace urban_rec {
 
         std::string getInputImagePath();
 
-        void setReferencePath(std::string ref_path);
+        void setDirPath(std::string path);
 
-        std::string getReferencePath();
+        std::string getDirPath();
 
         void setDescriptionFileOption(bool description_file);
 
@@ -68,19 +70,28 @@ namespace urban_rec {
 
         shift_coord getShift();
 
+        void setCsvFile(std::string file_path, int pColumnNameIdx=0, int pRowNameIdx=0, char separatorParams='\t');
+
+        rapidcsv::Document getCsvFile();
+
         void transform();
+
+        void transform_dir();
 
     private:
         cv::Mat imagePanorama;
         std::string input_image_path;
         std::string output_image_path;
-        std::string reference_path;
+        std::string dir_path;
         int input_width;
         int input_height;
         bool description_file_option;
         double focal_length_w = 1000.0;
         double focal_length_h = 1000.0;
         shift_coord shift = std::make_tuple(0, 0, 0);
+        rapidcsv::Document csv_file;
+
+        double degree_to_radian(double degree);
 
         float getTheta(float x, float y);
 

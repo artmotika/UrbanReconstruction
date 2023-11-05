@@ -26,97 +26,104 @@ struct polygon_struct {
     PointXYZ p3;
 };
 
-class Building_reconstruction {
-public:
-    void setInputFile(std::string file_name);
+namespace urban_rec {
+    class Building_reconstruction {
+    public:
+        void setInputFile(std::string file_name);
 
-    std::string getInputFile();
+        std::string getInputFile();
 
-    void setInputFileSurfaces(std::string file_name);
+        void setInputFileSurfaces(std::string file_name);
 
-    std::string getInputFileSurfaces();
+        std::string getInputFileSurfaces();
 
-    void setOutputFile(std::string file_name);
+        void setOutputFile(std::string file_name);
 
-    std::string getOutputFile();
+        std::string getOutputFile();
 
-    void setPoissonDepth(int depth);
+        void setPoissonDepth(int depth);
 
-    int getPoissonDepth();
+        int getPoissonDepth();
 
-    void setSolverDivide(int divide);
+        void setSolverDivide(int divide);
 
-    int getSolverDivide();
+        int getSolverDivide();
 
-    void setIsoDivide(int divide);
+        void setIsoDivide(int divide);
 
-    int getIsoDivide();
+        int getIsoDivide();
 
-    void setPoissonPointWeight(float point_weight);
+        void setPoissonPointWeight(float point_weight);
 
-    float getPoissonPointWeight();
+        float getPoissonPointWeight();
 
-    void setConcaveHullAlpha(float alpha);
+        void setConcaveHullAlpha(float alpha);
 
-    float getConcaveHullAlpha();
+        float getConcaveHullAlpha();
 
-    void setConcaveHullAlphaUpsample(float alpha);
+        void setConcaveHullAlphaUpsample(float alpha);
 
-    float getConcaveHullAlphaUpsample();
+        float getConcaveHullAlphaUpsample();
 
-    void setConvexConcaveHull(bool hull_type);
+        void setConvexConcaveHull(bool hull_type);
 
-    bool getConvexConcaveHull();
+        bool getConvexConcaveHull();
 
-    void setFilterRadius(double radius);
+        void setFilterRadius(double radius);
 
-    double getFilterRadius();
+        double getFilterRadius();
 
-    PolygonMesh filter_mesh_by_mesh(PolygonMesh mesh_input, PolygonMesh mesh_filter);
+        PolygonMesh filter_mesh_by_mesh(PolygonMesh mesh_input, PolygonMesh mesh_filter);
 
-    PolygonMesh
-    filter_mesh_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter, double filter_radius);
+        PolygonMesh
+        filter_mesh_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
+                              double filter_radius);
 
-    PolygonMesh filter_mesh_poisson_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
-                                              double filter_radius);
+        PolygonMesh filter_mesh_poisson_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
+                                                  double filter_radius);
 
-    PointCloud<PointXYZ>::Ptr
-    filter_points_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
-                            double filter_radius);
+        PolygonMesh
+        filter_mesh_poisson_by_points_no_extra(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
+                                               double filter_radius);
 
-    PointCloud<PointXYZ>::Ptr filter_points_by_mesh(PolygonMesh mesh_input);
+        PointCloud<PointXYZ>::Ptr
+        filter_points_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
+                                double filter_radius);
 
-    void upsample_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh, double max_polygon_size,
-                       double max_polygon_side);
+        PointCloud<PointXYZ>::Ptr filter_points_by_mesh(PolygonMesh mesh_input);
 
-    std::pair<unsigned long, double>
-    calculate_repeatability_metric(PCLPointCloud2::Ptr cloud_ideal, PCLPointCloud2::Ptr cloud_repeat,
-                                   double max_mistake, std::string cloud_not_repeat_path);
+        void upsample_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh, double max_polygon_size,
+                           double max_polygon_side);
 
-    std::pair<unsigned long, double>
-    calculate_hole_metric(PCLPointCloud2::Ptr cloud_ideal, PCLPointCloud2::Ptr cloud_repeat, double max_mistake,
-                          std::string cloud_hole_path);
+        std::pair<unsigned long, double>
+        calculate_repeatability_metric(PCLPointCloud2::Ptr cloud_ideal, PCLPointCloud2::Ptr cloud_repeat,
+                                       double max_mistake, std::string cloud_not_repeat_path);
 
-    PolygonMesh reconstruct();
+        std::pair<unsigned long, double>
+        calculate_hole_metric(PCLPointCloud2::Ptr cloud_ideal, PCLPointCloud2::Ptr cloud_repeat, double max_mistake,
+                              std::string cloud_hole_path);
 
-    PolygonMesh reconstruct2();
+        PolygonMesh reconstruct();
 
-private:
-    std::string input_file;
-    std::string input_file_surfaces;
-    std::string output_file;
-    int poisson_depth = 10;
-    int solver_divide = 8;
-    int iso_divide = 8;
-    float poisson_point_weight = 4.0f;
-    float coefficient_distance_filtering = 1.8;
-    float concave_hull_alpha = 8.0f;
-    float concave_hull_alpha_upsample = 3.0f;
-    bool convex_concave_hull = true;
-    double filter_radius = 0.5;
+        PolygonMesh reconstruct2();
 
-    void upsample_by_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh);
-};
+    private:
+        std::string input_file;
+        std::string input_file_surfaces;
+        std::string output_file;
+        int poisson_depth = 10;
+        int solver_divide = 8;
+        int iso_divide = 8;
+        float poisson_point_weight = 4.0f;
+        float coefficient_distance_filtering = 1.8;
+        float concave_hull_alpha = 8.0f;
+        float concave_hull_alpha_upsample = 3.0f;
+        bool convex_concave_hull = true;
+        double filter_radius = 0.5;
+
+        void upsample_by_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh);
+    };
+}
 
 
 #endif //URBANRECONSTRUCTION_BUILDING_RECONSTRUCTION_H

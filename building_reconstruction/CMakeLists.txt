@@ -162,7 +162,7 @@ foreach (
     target_link_libraries(${target} PUBLIC algo_reconstruction)
     target_link_libraries(${target} PUBLIC shift)
     #  target_link_libraries(${target} PUBLIC surface_reconstruction)
-    #  target_link_libraries(${target} PUBLIC building_reconstruction)
+    target_link_libraries(${target} PUBLIC building_reconstruction)
     target_link_libraries(${target} PUBLIC texturing_mapping)
     #  target_link_libraries(${target} PUBLIC ${catkin_LIBRARIES})
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support ${PCL_LIBRARIES}) #${OpenCV_LIBS}

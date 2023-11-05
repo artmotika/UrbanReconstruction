@@ -2,7 +2,7 @@
 #include "Algo_reconstruction.h"
 
 using namespace pcl;
-using namespace algo_rec;
+using namespace urban_rec;
 
 int main() {
     Building_reconstruction building_reconstruction;
@@ -42,8 +42,8 @@ int main() {
 
     // ideal
     Io_pcl::loadCloud("../data/Construction_home_sample_normals_ideal_point_cloud.pcd", *ideal_cloud);
-    compute_poisson(ideal_cloud, ideal_mesh, poisson_depth, solver_divide, iso_divide, poisson_point_weight);
-    ideal_mesh = building_reconstruction.filter_mesh_poisson_by_points(
+    algo_rec::compute_poisson(ideal_cloud, ideal_mesh, poisson_depth, solver_divide, iso_divide, poisson_point_weight);
+    ideal_mesh = building_reconstruction.filter_mesh_poisson_by_points_no_extra(
             ideal_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 2.4);
     PointCloud<PointXYZ>::Ptr ideal_points = building_reconstruction.filter_points_by_mesh(
@@ -55,7 +55,7 @@ int main() {
 
     // poisson_repeatable
     poisson_plane_mesh = building_reconstruction.reconstruct();
-    poisson_plane_mesh = building_reconstruction.filter_mesh_poisson_by_points(
+    poisson_plane_mesh = building_reconstruction.filter_mesh_poisson_by_points_no_extra(
             poisson_plane_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 2.4);
     PointCloud<PointXYZ>::Ptr poisson_plane_points = building_reconstruction.filter_points_by_mesh(
@@ -67,100 +67,100 @@ int main() {
 
 
     // poisson_repeatable_not_plane
-    IO.loadCloud("../data/Construction_home_sample_normals.pcd", *poisson_cloud);
-    compute_poisson(poisson_cloud, poisson_mesh, poisson_depth,
-                    solver_divide, iso_divide, poisson_point_weight);
-    poisson_mesh = building_reconstruction.filter_mesh_poisson_by_points(
+    Io_pcl::loadCloud("../data/Construction_home_sample_normals.pcd", *poisson_cloud);
+    algo_rec::compute_poisson(poisson_cloud, poisson_mesh, poisson_depth,
+                              solver_divide, iso_divide, poisson_point_weight);
+    poisson_mesh = building_reconstruction.filter_mesh_poisson_by_points_no_extra(
             poisson_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 1.2);
     PointCloud<PointXYZ>::Ptr poisson_points = building_reconstruction.filter_points_by_mesh(
             poisson_mesh);
-    IO.saveCloud("../data/poisson.ply", poisson_mesh);
-    IO.saveCloud("../data/poisson_points.ply", *poisson_points);
+    Io_pcl::saveCloud("../data/poisson.ply", poisson_mesh);
+    Io_pcl::saveCloud("../data/poisson_points.ply", *poisson_points);
     building_reconstruction.upsample_mesh(poisson_points,
                                           poisson_mesh, 0.04, 0.2);
-    IO.saveCloud("../data/poisson_points_upsample.ply", *poisson_points);
+    Io_pcl::saveCloud("../data/poisson_points_upsample.ply", *poisson_points);
 
     // ball_pivot_repeatable_not_plane
-    IO.loadCloud("../data/ball_pivot3_mesh.ply", pivot_mesh);
+    Io_pcl::loadCloud("../data/ball_pivot3_mesh.ply", pivot_mesh);
     pivot_mesh = building_reconstruction.filter_mesh_by_points(
             pivot_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 1.2);
     PointCloud<PointXYZ>::Ptr pivot_points = building_reconstruction.filter_points_by_mesh(
             pivot_mesh);
-    IO.saveCloud("../data/pivot.ply", pivot_mesh);
-    IO.saveCloud("../data/pivot_points.ply", *pivot_points);
+    Io_pcl::saveCloud("../data/pivot.ply", pivot_mesh);
+    Io_pcl::saveCloud("../data/pivot_points.ply", *pivot_points);
     building_reconstruction.upsample_mesh(pivot_points,
                                           pivot_mesh, 0.04, 0.2);
-    IO.saveCloud("../data/pivot_points_upsample.ply", *pivot_points);
+    Io_pcl::saveCloud("../data/pivot_points_upsample.ply", *pivot_points);
 
     // alpha_shape
-    IO.loadCloud("../data/alpha_shape2_mesh.ply", alpha_shape_mesh);
+    Io_pcl::loadCloud("../data/alpha_shape2_mesh.ply", alpha_shape_mesh);
     alpha_shape_mesh = building_reconstruction.filter_mesh_by_points(
             alpha_shape_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 1.2);
     PointCloud<PointXYZ>::Ptr alpha_shape_points = building_reconstruction.filter_points_by_mesh(
             alpha_shape_mesh);
-    IO.saveCloud("../data/alpha_shape.ply", alpha_shape_mesh);
-    IO.saveCloud("../data/alpha_shape_points.ply", *alpha_shape_points);
+    Io_pcl::saveCloud("../data/alpha_shape.ply", alpha_shape_mesh);
+    Io_pcl::saveCloud("../data/alpha_shape_points.ply", *alpha_shape_points);
     building_reconstruction.upsample_mesh(alpha_shape_points,
                                           alpha_shape_mesh, 0.04, 0.2);
-    IO.saveCloud("../data/alpha_shape_points_upsample.ply", *alpha_shape_points);
+    Io_pcl::saveCloud("../data/alpha_shape_points_upsample.ply", *alpha_shape_points);
 
     // scale_space
-    IO.loadCloud("../data/scale_space_mesh.ply", scale_space_mesh);
+    Io_pcl::loadCloud("../data/scale_space_mesh.ply", scale_space_mesh);
     scale_space_mesh = building_reconstruction.filter_mesh_by_points(
             scale_space_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 1.2);
     PointCloud<PointXYZ>::Ptr scale_space_points = building_reconstruction.filter_points_by_mesh(
             scale_space_mesh);
-    IO.saveCloud("../data/scale_space.ply", scale_space_mesh);
-    IO.saveCloud("../data/scale_space_points.ply", *scale_space_points);
+    Io_pcl::saveCloud("../data/scale_space.ply", scale_space_mesh);
+    Io_pcl::saveCloud("../data/scale_space_points.ply", *scale_space_points);
     building_reconstruction.upsample_mesh(scale_space_points,
                                           scale_space_mesh, 0.04, 0.2);
-    IO.saveCloud("../data/scale_space_points_upsample.ply", *scale_space_points);
+    Io_pcl::saveCloud("../data/scale_space_points_upsample.ply", *scale_space_points);
 
     // delaunay
-    IO.loadCloud("../data/delaunay_mesh.ply", delaunay_mesh);
+    Io_pcl::loadCloud("../data/delaunay_mesh.ply", delaunay_mesh);
     delaunay_mesh = building_reconstruction.filter_mesh_by_points(
             delaunay_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 1.2);
     PointCloud<PointXYZ>::Ptr delaunay_points = building_reconstruction.filter_points_by_mesh(
             delaunay_mesh);
-    IO.saveCloud("../data/delaunay.ply", delaunay_mesh);
-    IO.saveCloud("../data/delaunay_points.ply", *delaunay_points);
+    Io_pcl::saveCloud("../data/delaunay.ply", delaunay_mesh);
+    Io_pcl::saveCloud("../data/delaunay_points.ply", *delaunay_points);
     building_reconstruction.upsample_mesh(delaunay_points,
                                           delaunay_mesh, 0.04, 0.2);
-    IO.saveCloud("../data/delaunay_points_upsample.ply", *delaunay_points);
+    Io_pcl::saveCloud("../data/delaunay_points_upsample.ply", *delaunay_points);
 
     // greedy_triangulation
-    IO.loadCloud("../data/Construction_home_sample_normals.pcd", *greedy_cloud);
-    compute_greedy_triangulation(greedy_cloud, greedy_mesh, greedy_mu, greedy_radius);
-    IO.saveCloud("../data/greedy_mesh.ply", greedy_mesh);
+    Io_pcl::loadCloud("../data/Construction_home_sample_normals.pcd", *greedy_cloud);
+    algo_rec::compute_greedy_triangulation(greedy_cloud, greedy_mesh, greedy_mu, greedy_radius);
+    Io_pcl::saveCloud("../data/greedy_mesh.ply", greedy_mesh);
     greedy_mesh = building_reconstruction.filter_mesh_by_points(
             greedy_mesh,
             std::make_shared<PCLPointCloud2>(surfaces_mesh.cloud), 1.2);
     PointCloud<PointXYZ>::Ptr greedy_points = building_reconstruction.filter_points_by_mesh(
             greedy_mesh);
-    IO.saveCloud("../data/greedy.ply", greedy_mesh);
-    IO.saveCloud("../data/greedy_points.ply", *greedy_points);
+    Io_pcl::saveCloud("../data/greedy.ply", greedy_mesh);
+    Io_pcl::saveCloud("../data/greedy_points.ply", *greedy_points);
     building_reconstruction.upsample_mesh(greedy_points,
                                           greedy_mesh, 0.04, 0.2);
-    IO.saveCloud("../data/greedy_points_upsample.ply", *greedy_points);
+    Io_pcl::saveCloud("../data/greedy_points_upsample.ply", *greedy_points);
 
 
     // metrics
     double repeat_mistake = 0.3; //0.2
     double hole_mistake = 0.15; //0.15
-    IO.loadCloudPLY("../data/ideal_points_partnew.ply", *ideal_cloud);
+    Io_pcl::loadCloudPLY("../data/ideal_points_partnew.ply", *ideal_cloud);
     PCLPointCloud2::Ptr ideal_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/ideal_points_upsample_partnew.ply", *ideal_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/ideal_points_upsample_partnew.ply", *ideal_cloud_upsample);
 
     std::pair<unsigned long, double> metric_pair;
 
     // poisson_plane
     PCLPointCloud2::Ptr poisson_plane_cloud(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/poisson_plane_points_part.ply", *poisson_plane_cloud);
+    Io_pcl::loadCloudPLY("../data/poisson_plane_points_part.ply", *poisson_plane_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
                                                                          poisson_plane_cloud,
                                                                          repeat_mistake,
@@ -172,7 +172,7 @@ int main() {
               << " value: " << metric_pair.second
               << std::endl;
     PCLPointCloud2::Ptr poisson_plane_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/poisson_plane_points_upsample_part.ply", *poisson_plane_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/poisson_plane_points_upsample_part.ply", *poisson_plane_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 poisson_plane_cloud_upsample,
                                                                 hole_mistake,
@@ -185,7 +185,7 @@ int main() {
 
 
     // poisson
-    IO.loadCloudPLY("../data/poisson_points_part.ply", *poisson_cloud);
+    Io_pcl::loadCloudPLY("../data/poisson_points_part.ply", *poisson_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
                                                                          poisson_cloud,
                                                                          repeat_mistake,
@@ -197,7 +197,7 @@ int main() {
               << " value: " << metric_pair.second
               << std::endl;
     PCLPointCloud2::Ptr poisson_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/poisson_points_upsample_part.ply", *poisson_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/poisson_points_upsample_part.ply", *poisson_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 poisson_cloud_upsample,
                                                                 hole_mistake,
@@ -210,7 +210,7 @@ int main() {
 
 
     // pivot
-    IO.loadCloudPLY("../data/pivot_points_part.ply", *pivot_cloud);
+    Io_pcl::loadCloudPLY("../data/pivot_points_part.ply", *pivot_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
                                                                          pivot_cloud,
                                                                          repeat_mistake,
@@ -223,7 +223,7 @@ int main() {
 
               << std::endl;
     PCLPointCloud2::Ptr pivot_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/pivot_points_upsample_part.ply", *pivot_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/pivot_points_upsample_part.ply", *pivot_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 pivot_cloud_upsample,
                                                                 hole_mistake,
@@ -236,7 +236,7 @@ int main() {
 
 
     // alpha_shape
-    IO.loadCloudPLY("../data/alpha_shape_points_part.ply", *alpha_shape_cloud);
+    Io_pcl::loadCloudPLY("../data/alpha_shape_points_part.ply", *alpha_shape_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
                                                                          alpha_shape_cloud,
                                                                          repeat_mistake,
@@ -248,7 +248,7 @@ int main() {
               << " value: " << metric_pair.second
               << std::endl;
     PCLPointCloud2::Ptr alpha_shape_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/alpha_shape_points_upsample_part.ply", *alpha_shape_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/alpha_shape_points_upsample_part.ply", *alpha_shape_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 alpha_shape_cloud_upsample,
                                                                 hole_mistake,
@@ -261,7 +261,7 @@ int main() {
 
 
     // delaunay
-    IO.loadCloudPLY("../data/delaunay_points_part.ply", *delaunay_cloud);
+    Io_pcl::loadCloudPLY("../data/delaunay_points_part.ply", *delaunay_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
                                                                          delaunay_cloud,
                                                                          repeat_mistake,
@@ -273,7 +273,7 @@ int main() {
               << " value: " << metric_pair.second
               << std::endl;
     PCLPointCloud2::Ptr delaunay_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/delaunay_points_upsample_part.ply", *delaunay_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/delaunay_points_upsample_part.ply", *delaunay_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 delaunay_cloud_upsample,
                                                                 hole_mistake,
@@ -286,7 +286,7 @@ int main() {
 
 
     // scale_space
-    IO.loadCloudPLY("../data/scale_space_points_partnew.ply", *scale_space_cloud);
+    Io_pcl::loadCloudPLY("../data/scale_space_points_partnew.ply", *scale_space_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
                                                                          scale_space_cloud,
                                                                          repeat_mistake,
@@ -297,7 +297,7 @@ int main() {
               << " value: " << metric_pair.second
               << std::endl;
     PCLPointCloud2::Ptr scale_space_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/scale_space_points_upsample_partnew.ply", *scale_space_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/scale_space_points_upsample_partnew.ply", *scale_space_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 scale_space_cloud_upsample,
                                                                 hole_mistake,
@@ -310,7 +310,7 @@ int main() {
 
 
     // greedy
-    IO.loadCloudPLY("../data/greedy_points_partnew.ply", *greedy_cloud);
+    Io_pcl::loadCloudPLY("../data/greedy_points_partnew.ply", *greedy_cloud);
     metric_pair = building_reconstruction.calculate_repeatability_metric(ideal_cloud_upsample,
                                                                          greedy_cloud,
                                                                          repeat_mistake,
@@ -321,7 +321,7 @@ int main() {
               << " value: " << metric_pair.second
               << std::endl;
     PCLPointCloud2::Ptr greedy_cloud_upsample(new PCLPointCloud2);
-    IO.loadCloudPLY("../data/greedy_points_upsample_partnew.ply", *greedy_cloud_upsample);
+    Io_pcl::loadCloudPLY("../data/greedy_points_upsample_partnew.ply", *greedy_cloud_upsample);
     metric_pair = building_reconstruction.calculate_hole_metric(ideal_cloud_upsample,
                                                                 greedy_cloud_upsample,
                                                                 hole_mistake, //0.25

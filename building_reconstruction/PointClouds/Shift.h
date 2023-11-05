@@ -12,11 +12,11 @@ using namespace pcl;
 namespace urban_rec {
     using shift_coord = std::tuple<double, double, double>;
 
-    PointCloud<PointNormal>::Ptr shiftCoord(PCLPointCloud2::Ptr input_cloud, shift_coord shift);
+    PointCloud<PointNormal>::Ptr shiftCoord(const PCLPointCloud2::ConstPtr input_cloud, shift_coord shift);
 
-    PointCloud<PointNormal>::Ptr shiftCoord(PointCloud<PointNormal>::Ptr input_cloud, shift_coord shift);
+    PointCloud<PointNormal>::Ptr shiftCoord(const PointCloud<PointNormal>::ConstPtr input_cloud, shift_coord shift);
 
-    PointCloud<PointXYZ>::Ptr shiftCoord(PointCloud<PointXYZ>::Ptr input_cloud, shift_coord shift);
+    PointCloud<PointXYZ>::Ptr shiftCoord(const PointCloud<PointXYZ>::ConstPtr input_cloud, shift_coord shift);
 }
 
 #endif //URBANRECONSTRUCTION_SHIFT_H

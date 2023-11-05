@@ -2,7 +2,7 @@
 
 using namespace pcl;
 
-PointCloud<PointNormal>::Ptr urban_rec::shiftCoord(PCLPointCloud2::Ptr input_cloud, urban_rec::shift_coord shift) {
+PointCloud<PointNormal>::Ptr urban_rec::shiftCoord(const PCLPointCloud2::ConstPtr input_cloud, urban_rec::shift_coord shift) {
     PointCloud<PointNormal>::Ptr new_vertices(new PointCloud <PointNormal>);
 
     PointCloud<PointNormal>::Ptr all_vertices(new PointCloud <PointNormal>);
@@ -17,7 +17,7 @@ PointCloud<PointNormal>::Ptr urban_rec::shiftCoord(PCLPointCloud2::Ptr input_clo
 }
 
 PointCloud<PointNormal>::Ptr
-urban_rec::shiftCoord(PointCloud<PointNormal>::Ptr input_cloud, urban_rec::shift_coord shift) {
+urban_rec::shiftCoord(const PointCloud<PointNormal>::ConstPtr input_cloud, urban_rec::shift_coord shift) {
     PointCloud<PointNormal>::Ptr new_vertices(new PointCloud <PointNormal>);
 
     for (PointNormal p: *input_cloud) {
@@ -29,7 +29,7 @@ urban_rec::shiftCoord(PointCloud<PointNormal>::Ptr input_cloud, urban_rec::shift
     return new_vertices;
 }
 
-PointCloud<PointXYZ>::Ptr urban_rec::shiftCoord(PointCloud<PointXYZ>::Ptr input_cloud, urban_rec::shift_coord shift) {
+PointCloud<PointXYZ>::Ptr urban_rec::shiftCoord(const PointCloud<PointXYZ>::ConstPtr input_cloud, urban_rec::shift_coord shift) {
     PointCloud<PointXYZ>::Ptr new_vertices(new PointCloud <PointXYZ>);
 
     for (PointXYZ p: *input_cloud) {

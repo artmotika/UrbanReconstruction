@@ -1,9 +1,6 @@
 #include "Building_reconstruction.h"
-#include "Algo_reconstruction.cpp"
 
-using namespace algo_rec;
-
-void Building_reconstruction::upsample_by_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh) {
+void urban_rec::Building_reconstruction::upsample_by_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh) {
     PointCloud<PointXYZ>::Ptr all_vertices_surf(new PointCloud<PointXYZ>());
     fromPCLPointCloud2(mesh.cloud, *all_vertices_surf);
 
@@ -108,95 +105,95 @@ void Building_reconstruction::upsample_by_mesh(PointCloud<PointXYZ>::Ptr &cloud_
     }
 }
 
-void Building_reconstruction::setInputFile(std::string file_name) {
+void urban_rec::Building_reconstruction::setInputFile(std::string file_name) {
     input_file = file_name;
 }
 
-std::string Building_reconstruction::getInputFile() {
+std::string urban_rec::Building_reconstruction::getInputFile() {
     return input_file;
 }
 
-void Building_reconstruction::setInputFileSurfaces(std::string file_name) {
+void urban_rec::Building_reconstruction::setInputFileSurfaces(std::string file_name) {
     input_file_surfaces = file_name;
 }
 
-std::string Building_reconstruction::getInputFileSurfaces() {
+std::string urban_rec::Building_reconstruction::getInputFileSurfaces() {
     return input_file_surfaces;
 }
 
-void Building_reconstruction::setOutputFile(std::string file_name) {
+void urban_rec::Building_reconstruction::setOutputFile(std::string file_name) {
     output_file = file_name;
 }
 
-std::string Building_reconstruction::getOutputFile() {
+std::string urban_rec::Building_reconstruction::getOutputFile() {
     return output_file;
 }
 
-void Building_reconstruction::setPoissonDepth(int depth) {
+void urban_rec::Building_reconstruction::setPoissonDepth(int depth) {
     poisson_depth = depth;
 }
 
-int Building_reconstruction::getPoissonDepth() {
+int urban_rec::Building_reconstruction::getPoissonDepth() {
     return poisson_depth;
 }
 
-void Building_reconstruction::setSolverDivide(int divide) {
+void urban_rec::Building_reconstruction::setSolverDivide(int divide) {
     solver_divide = divide;
 }
 
-int Building_reconstruction::getSolverDivide() {
+int urban_rec::Building_reconstruction::getSolverDivide() {
     return solver_divide;
 }
 
-void Building_reconstruction::setIsoDivide(int divide) {
+void urban_rec::Building_reconstruction::setIsoDivide(int divide) {
     iso_divide = divide;
 }
 
-int Building_reconstruction::getIsoDivide() {
+int urban_rec::Building_reconstruction::getIsoDivide() {
     return iso_divide;
 }
 
-void Building_reconstruction::setPoissonPointWeight(float point_weight) {
+void urban_rec::Building_reconstruction::setPoissonPointWeight(float point_weight) {
     poisson_point_weight = point_weight;
 }
 
-float Building_reconstruction::getPoissonPointWeight() {
+float urban_rec::Building_reconstruction::getPoissonPointWeight() {
     return poisson_point_weight;
 }
 
-void Building_reconstruction::setConcaveHullAlpha(float alpha) {
+void urban_rec::Building_reconstruction::setConcaveHullAlpha(float alpha) {
     concave_hull_alpha = alpha;
 }
 
-float Building_reconstruction::getConcaveHullAlpha() {
+float urban_rec::Building_reconstruction::getConcaveHullAlpha() {
     return concave_hull_alpha;
 }
 
-void Building_reconstruction::setConcaveHullAlphaUpsample(float alpha) {
+void urban_rec::Building_reconstruction::setConcaveHullAlphaUpsample(float alpha) {
     concave_hull_alpha_upsample = alpha;
 }
 
-float Building_reconstruction::getConcaveHullAlphaUpsample() {
+float urban_rec::Building_reconstruction::getConcaveHullAlphaUpsample() {
     return concave_hull_alpha_upsample;
 }
 
-void Building_reconstruction::setConvexConcaveHull(bool hull_type) {
+void urban_rec::Building_reconstruction::setConvexConcaveHull(bool hull_type) {
     convex_concave_hull = hull_type;
 }
 
-bool Building_reconstruction::getConvexConcaveHull() {
+bool urban_rec::Building_reconstruction::getConvexConcaveHull() {
     return convex_concave_hull;
 }
 
-void Building_reconstruction::setFilterRadius(double radius) {
+void urban_rec::Building_reconstruction::setFilterRadius(double radius) {
     filter_radius = radius;
 }
 
-double Building_reconstruction::getFilterRadius() {
+double urban_rec::Building_reconstruction::getFilterRadius() {
     return filter_radius;
 }
 
-PolygonMesh Building_reconstruction::filter_mesh_by_mesh(PolygonMesh mesh_input, PolygonMesh mesh_filter) {
+PolygonMesh urban_rec::Building_reconstruction::filter_mesh_by_mesh(PolygonMesh mesh_input, PolygonMesh mesh_filter) {
     TicToc tt;
     tt.tic();
 
@@ -283,8 +280,9 @@ PolygonMesh Building_reconstruction::filter_mesh_by_mesh(PolygonMesh mesh_input,
 }
 
 PolygonMesh
-Building_reconstruction::filter_mesh_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
-                                               double filter_radius) {
+urban_rec::Building_reconstruction::filter_mesh_by_points(PolygonMesh mesh_input,
+                                                          const PCLPointCloud2::ConstPtr &points_filter,
+                                                          double filter_radius) {
     TicToc tt;
     tt.tic();
 
@@ -333,9 +331,68 @@ Building_reconstruction::filter_mesh_by_points(PolygonMesh mesh_input, const PCL
     return mesh_input;
 }
 
-PolygonMesh Building_reconstruction::filter_mesh_poisson_by_points(PolygonMesh mesh_input,
-                                                                   const PCLPointCloud2::ConstPtr &points_filter,
-                                                                   double filter_radius) {
+PolygonMesh urban_rec::Building_reconstruction::filter_mesh_poisson_by_points(PolygonMesh mesh_input,
+                                                                              const PCLPointCloud2::ConstPtr &points_filter,
+                                                                              double filter_radius) {
+    TicToc tt;
+    tt.tic();
+
+    PointCloud<PointXYZ>::Ptr points_filter_xyz(new PointCloud<PointXYZ>());
+    fromPCLPointCloud2(*points_filter, *points_filter_xyz);
+
+    std::vector <Vertices> new_polygons_filtering;
+
+    PointCloud<PointXYZ>::Ptr all_vertices(new PointCloud <PointXYZ>);
+    fromPCLPointCloud2(mesh_input.cloud, *all_vertices);
+
+    int polygons_left = mesh_input.polygons.size();
+    std::cout << "number polygons: " << polygons_left << std::endl;
+
+    size_t array_size = all_vertices->points.size();
+    unsigned short *vertex_indices = (unsigned short *) malloc(array_size * sizeof(unsigned short));
+    memset(vertex_indices, 0, array_size * sizeof(unsigned short));
+
+    for (std::vector<Vertices>::iterator it1 = mesh_input.polygons.begin(); it1 != mesh_input.polygons.end(); it1++) {
+        Indices vertecies = it1->vertices;
+        PointXYZ p1;
+        PointXYZ p2;
+        PointXYZ p3;
+        if (vertecies.size() >= 3) {
+            p1 = all_vertices->points[vertecies[0]];
+            p2 = all_vertices->points[vertecies[1]];
+            p3 = all_vertices->points[vertecies[2]];
+        } else continue;
+
+        polygons_left--;
+        if (polygons_left % 10000 == 0) std::cout << "number polygons left: " << polygons_left << std::endl;
+
+        PointXYZ pcenter;
+        pcenter.x = (p1.x + p2.x + p3.x) / 3.0;
+        pcenter.y = (p1.y + p2.y + p3.y) / 3.0;
+        pcenter.z = (p1.z + p2.z + p3.z) / 3.0;
+        for (PointXYZ p: *points_filter_xyz) {
+            if (Geometry_pcl::point_in_radius(pcenter, p, filter_radius)) {
+                vertex_indices[vertecies[0]] = vertex_indices[vertecies[0]] + 1;
+                vertex_indices[vertecies[1]] = vertex_indices[vertecies[1]] + 1;
+                vertex_indices[vertecies[2]] = vertex_indices[vertecies[2]] + 1;
+                new_polygons_filtering.push_back(*it1);
+                break;
+            }
+        }
+    }
+
+    free(vertex_indices);
+    mesh_input.polygons = new_polygons_filtering;
+    print_info("[done, ");
+    print_value("%g", tt.toc());
+    print_info(" ms]\n");
+
+    return mesh_input;
+}
+
+PolygonMesh urban_rec::Building_reconstruction::filter_mesh_poisson_by_points_no_extra(PolygonMesh mesh_input,
+                                                                                       const PCLPointCloud2::ConstPtr &points_filter,
+                                                                                       double filter_radius) {
     TicToc tt;
     tt.tic();
 
@@ -355,8 +412,6 @@ PolygonMesh Building_reconstruction::filter_mesh_poisson_by_points(PolygonMesh m
 
     int polygons_left = mesh_input.polygons.size();
     std::cout << "number polygons: " << polygons_left << std::endl;
-
-    bool first_try = true;
 
     size_t array_size = all_vertices->points.size();
     unsigned short *vertex_indices = (unsigned short *) malloc(array_size * sizeof(unsigned short));
@@ -481,8 +536,9 @@ PolygonMesh Building_reconstruction::filter_mesh_poisson_by_points(PolygonMesh m
 }
 
 PointCloud<PointXYZ>::Ptr
-Building_reconstruction::filter_points_by_points(PolygonMesh mesh_input, const PCLPointCloud2::ConstPtr &points_filter,
-                                                 double filter_radius) {
+urban_rec::Building_reconstruction::filter_points_by_points(PolygonMesh mesh_input,
+                                                            const PCLPointCloud2::ConstPtr &points_filter,
+                                                            double filter_radius) {
     TicToc tt;
     tt.tic();
 
@@ -516,7 +572,7 @@ Building_reconstruction::filter_points_by_points(PolygonMesh mesh_input, const P
     return points_filtered_xyz;
 }
 
-PointCloud<PointXYZ>::Ptr Building_reconstruction::filter_points_by_mesh(PolygonMesh mesh_input) {
+PointCloud<PointXYZ>::Ptr urban_rec::Building_reconstruction::filter_points_by_mesh(PolygonMesh mesh_input) {
     TicToc tt;
     tt.tic();
 
@@ -569,8 +625,9 @@ PointCloud<PointXYZ>::Ptr Building_reconstruction::filter_points_by_mesh(Polygon
 }
 
 void
-Building_reconstruction::upsample_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh, double max_polygon_size,
-                                       double max_polygon_side) {
+urban_rec::Building_reconstruction::upsample_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, PolygonMesh mesh,
+                                                  double max_polygon_size,
+                                                  double max_polygon_side) {
     std::vector <polygon_struct> new_polygons{};
 
     PointCloud<PointXYZ>::Ptr all_vertices(new PointCloud<PointXYZ>());
@@ -695,9 +752,10 @@ Building_reconstruction::upsample_mesh(PointCloud<PointXYZ>::Ptr &cloud_in, Poly
 }
 
 std::pair<unsigned long, double>
-Building_reconstruction::calculate_repeatability_metric(PCLPointCloud2::Ptr cloud_ideal,
-                                                        PCLPointCloud2::Ptr cloud_repeat,
-                                                        double max_mistake, std::string cloud_not_repeat_path) {
+urban_rec::Building_reconstruction::calculate_repeatability_metric(PCLPointCloud2::Ptr cloud_ideal,
+                                                                   PCLPointCloud2::Ptr cloud_repeat,
+                                                                   double max_mistake,
+                                                                   std::string cloud_not_repeat_path) {
     double sum = 0.0;
     unsigned long number_points_not_repeated = 0;
     PointCloud<PointXYZ>::Ptr xyz_cloud_ideal(new PointCloud<PointXYZ>());
@@ -732,9 +790,10 @@ Building_reconstruction::calculate_repeatability_metric(PCLPointCloud2::Ptr clou
 }
 
 std::pair<unsigned long, double>
-Building_reconstruction::calculate_hole_metric(PCLPointCloud2::Ptr cloud_ideal, PCLPointCloud2::Ptr cloud_repeat,
-                                               double max_mistake,
-                                               std::string cloud_hole_path) {
+urban_rec::Building_reconstruction::calculate_hole_metric(PCLPointCloud2::Ptr cloud_ideal,
+                                                          PCLPointCloud2::Ptr cloud_repeat,
+                                                          double max_mistake,
+                                                          std::string cloud_hole_path) {
     unsigned long number_hole_points = 0;
     double sum = 0.0;
     PointCloud<PointXYZ>::Ptr xyz_cloud_ideal(new PointCloud<PointXYZ>());
@@ -772,7 +831,7 @@ Building_reconstruction::calculate_hole_metric(PCLPointCloud2::Ptr cloud_ideal, 
     return std::make_pair(number_hole_points, std::sqrt(sum / number_points));
 }
 
-PolygonMesh Building_reconstruction::reconstruct2() {
+PolygonMesh urban_rec::Building_reconstruction::reconstruct2() {
     TicToc tt;
     tt.tic();
     PCLPointCloud2::Ptr input_cloud(new PCLPointCloud2);
@@ -785,7 +844,7 @@ PolygonMesh Building_reconstruction::reconstruct2() {
     fromPCLPointCloud2(surfaces_mesh.cloud, *cloud_surfaces);
 
     PolygonMesh hull_mesh;
-    compute_hull(cloud_surfaces, convex_concave_hull, concave_hull_alpha_upsample, hull_mesh);
+    algo_rec::compute_hull(cloud_surfaces, convex_concave_hull, concave_hull_alpha_upsample, hull_mesh);
     Io_pcl::saveCloud("../data/hull_mesh_plane.ply", hull_mesh);
 
     PointCloud<PointXYZ>::Ptr upsample_cloud(new PointCloud<PointXYZ>());
@@ -796,7 +855,7 @@ PolygonMesh Building_reconstruction::reconstruct2() {
 
     Io_pcl::saveCloud("../data/hull_mesh1_cloud2.ply", *upsample_cloud);
     PolygonMesh upsample_hull_mesh;
-    compute_hull(upsample_cloud, convex_concave_hull, concave_hull_alpha_upsample, upsample_hull_mesh);
+    algo_rec::compute_hull(upsample_cloud, convex_concave_hull, concave_hull_alpha_upsample, upsample_hull_mesh);
     Io_pcl::saveCloud("../data/concave_hull.ply", upsample_hull_mesh);
 
     PointCloud<PointXYZ>::Ptr new_vertices(new PointCloud <PointXYZ>);
@@ -862,7 +921,8 @@ PolygonMesh Building_reconstruction::reconstruct2() {
 
     // Apply the Poisson surface reconstruction algorithm
     PolygonMesh poisson_mesh;
-    compute_poisson(new_vertices_normals, poisson_mesh, poisson_depth, solver_divide, iso_divide, poisson_point_weight);
+    algo_rec::compute_poisson(new_vertices_normals, poisson_mesh, poisson_depth, solver_divide, iso_divide,
+                              poisson_point_weight);
 
     print_info("[done, ");
     print_value("%g", tt.toc());
@@ -871,7 +931,7 @@ PolygonMesh Building_reconstruction::reconstruct2() {
     return poisson_mesh;
 }
 
-PolygonMesh Building_reconstruction::reconstruct() {
+PolygonMesh urban_rec::Building_reconstruction::reconstruct() {
     TicToc tt;
     tt.tic();
     PCLPointCloud2::Ptr input_cloud(new PCLPointCloud2);
@@ -905,7 +965,8 @@ PolygonMesh Building_reconstruction::reconstruct() {
 
     // Apply the Poisson surface reconstruction algorithm
     PolygonMesh poisson_mesh;
-    compute_poisson(new_vertices, poisson_mesh, poisson_depth, solver_divide, iso_divide, poisson_point_weight);
+    algo_rec::compute_poisson(new_vertices, poisson_mesh, poisson_depth, solver_divide, iso_divide,
+                              poisson_point_weight);
     print_info("[done, ");
     print_value("%g", tt.toc());
     print_info(" ms]\n");
