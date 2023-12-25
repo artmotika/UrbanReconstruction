@@ -12,30 +12,31 @@ using namespace pcl;
 using namespace pcl::io;
 using namespace pcl::console;
 
-class Io_pcl {
-    public:
-        bool loadCloudPLY (const std::string &filename, PCLPointCloud2 &cloud);
+namespace Io_pcl {
 
-        bool loadCloud (const std::string &filename, PCLPointCloud2 &cloud);
+    bool loadCloudPLY(const std::string &filename, PCLPointCloud2 &cloud);
 
-        bool loadCloud (const std::string &filename, PointCloud<PointXYZ> &cloud);
+    bool loadCloud(const std::string &filename, PCLPointCloud2 &cloud);
 
-        bool loadCloud (const std::string &filename, PolygonMesh &cloud);
+    bool loadCloud(const std::string &filename, PointCloud <PointXYZ> &cloud);
 
-        void saveCloud (const std::string &filename, const PolygonMesh &cloud);
+    bool loadCloud(const std::string &filename, PolygonMesh &cloud);
 
-        void saveCloud (std::string const& filename, PointCloud<PointXYZ> const& cloud);
+    void saveCloud(const std::string &filename, const PolygonMesh &cloud);
 
-        void saveCloud (std::string const& filename, PointCloud<PointNormal> const& cloud);
+    void saveCloud(std::string const &filename, PointCloud <PointXYZ> const &cloud);
 
-        void saveCloud (std::string const& filename, PCLPointCloud2 const& cloud);
+    void saveCloud(std::string const &filename, PointCloud <PointNormal> const &cloud);
 
-        void saveCloudPCD (std::string const& filename, PointCloud<PointXYZ> const& cloud);
+    void saveCloud(std::string const &filename, PCLPointCloud2 const &cloud);
 
-        void saveCloudPCD (std::string const& filename, PointCloud<PointNormal> const& cloud);
+    void saveCloudPCD(std::string const &filename, PointCloud <PointXYZ> const &cloud);
 
-        void saveCloudPCD (std::string const& filename, PCLPointCloud2 const& cloud);
-};
+    void saveCloudPCD(std::string const &filename, PointCloud <PointXYZRGB> const &cloud);
 
+    void saveCloudPCD(std::string const &filename, PointCloud <PointNormal> const &cloud);
+
+    void saveCloudPCD(std::string const &filename, PCLPointCloud2 const &cloud);
+}
 
 #endif //URBANRECONSTRUCTION_IO_PCL_H

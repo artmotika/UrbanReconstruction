@@ -5,7 +5,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h> // since Cgal 5.6 changed
 #include <CGAL/Polygonal_surface_reconstruction.h>
 #include <CGAL/remove_outliers.h>
 #include <CGAL/grid_simplify_point_set.h>
@@ -38,11 +38,11 @@
 
 class Surface_reconstruction {
     public:
-        #ifdef CGAL_USE_SCIP  // defined (or not) by CMake scripts, do not define by hand
+#ifdef CGAL_USE_SCIP  // defined (or not) by CMake scripts, do not define by hand
         using MIP_Solver = CGAL::SCIP_mixed_integer_program_traits<double>;
-        #elif defined(CGAL_USE_GLPK)  // defined (or not) by CMake scripts, do not define by hand
+#elif defined(CGAL_USE_GLPK)  // defined (or not) by CMake scripts, do not define by hand
         using MIP_Solver = CGAL::GLPK_mixed_integer_program_traits<double>;
-        #endif
+#endif
         using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
         using FT = Kernel::FT;
         using Point = Kernel::Point_3;
